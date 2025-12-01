@@ -11,6 +11,7 @@ public class Main {
     /**
      * The Main method for this assignment.
      * You can optionally run this to interactively try the three methods.
+     *
      * @param args parameters are unused
      */
     public static void main(String[] args) {
@@ -33,15 +34,26 @@ public class Main {
     /**
      * Returns whether a given string is non-empty, contains one lower case letter,
      * at least one upper case letter, at least one digit, and meets the minimum length.
-     * @param str the string to check for the properties in
+     *
+     * @param str       the string to check for the properties in
      * @param minLength the minimum length required for the password
      * @return whether the string satisfies the password requirements
      */
     public static boolean checkForPassword(String str, int minLength) {
-        final boolean propertyOne = Pattern.matches("REPLACE WITH CORRECT REGEX", str);
-        // as needed, modify this code.
-        return propertyOne;
+        if (str == null) {
+            return false;
+        }
+
+        // 至少包含一个小写 + 一个大写 + 一个数字
+        final boolean propertyOne =
+                Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", str);
+
+        // 长度必须满足 minLength
+        final boolean longEnough = str.length() >= minLength;
+
+        return propertyOne && longEnough;
     }
+
 
     // Method 2 for checking if a string conforms to a regex: using Matcher.find
     // TODO: Modify this method to return a list of all email addresses contained in the
@@ -51,18 +63,33 @@ public class Main {
 
     /**
      * Returns a list of email addresses that occur in a given string.
+     *
      * @param str the string to look for email addresses in
      * @return a list containing the email addresses in the string.
      */
     public static List<String> extractEmails(String str) {
-        final Pattern pattern = Pattern.compile("REPLACE WITH CORRECT REGEX");
-        final Matcher matcher = pattern.matcher(str);
         final List<String> result = new ArrayList<>();
+
+        if (str == null) {
+            return result;
+        }
+
+        // \b           单词边界，避免把后面的标点符号（. , 等）吃进去
+        // [^\s@]+      @ 前面至少一个非空白且不是 @ 的字符
+        // (mail\.)?    可选的 "mail."
+        // utoronto\.ca 固定域名
+        // \b           单词边界
+        final Pattern pattern =
+                Pattern.compile("\\b[^\\s@]+@(mail\\.)?utoronto\\.ca\\b");
+
+        final Matcher matcher = pattern.matcher(str);
+
         while (matcher.find()) {
             result.add(matcher.group());
         }
         return result;
     }
+
 
     // Method 3 for checking if a string conforms to a regex: using String.matches
 
@@ -72,10 +99,18 @@ public class Main {
 
     /**
      * Checks whether a given string contains the same capital letter twice.
+     *
      * @param str the string to look for doubles in
      * @return whether str contains the same capital letter twice.
      */
     public static boolean checkForDoubles(String str) {
-        return str.matches("replace with correct regex");
+        if (str == null) {
+            return false;
+        }
+        return str.matches(".*([A-Z]).*\\1.*");
     }
 }
+
+
+
+
